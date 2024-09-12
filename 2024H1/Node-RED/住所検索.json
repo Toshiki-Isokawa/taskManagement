@@ -1,0 +1,183 @@
+[
+    {
+        "id": "b59774f4b980efc4",
+        "type": "tab",
+        "label": "Address",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "6f1166c89c3292ab",
+        "type": "http in",
+        "z": "b59774f4b980efc4",
+        "name": "",
+        "url": "/address",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 200,
+        "wires": [
+            [
+                "fba52a5ecbd5c61d"
+            ]
+        ]
+    },
+    {
+        "id": "5ddb8dc91dc63794",
+        "type": "http request",
+        "z": "b59774f4b980efc4",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 750,
+        "y": 140,
+        "wires": [
+            [
+                "20f1565f0df61d0a",
+                "6132b44a063f042e"
+            ]
+        ]
+    },
+    {
+        "id": "fba52a5ecbd5c61d",
+        "type": "function",
+        "z": "b59774f4b980efc4",
+        "name": "Generate API URL",
+        "func": "var apiKey = global.get('YAHOO_API_KEY');\n\nvar lat = msg.payload.lat;\nvar lon = msg.payload.lon;\n\nvar url = `https://map.yahooapis.jp/geocode/V1/geoCoder?lat=${lat}&lon=${lon}&appid=${apiKey}`;\nmsg.url = url;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 140,
+        "wires": [
+            [
+                "5ddb8dc91dc63794"
+            ]
+        ]
+    },
+    {
+        "id": "81d2de07d4dabcdd",
+        "type": "inject",
+        "z": "b59774f4b980efc4",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"lat\":\"\", \"lon\":\"\"}",
+        "payloadType": "json",
+        "x": 160,
+        "y": 80,
+        "wires": [
+            [
+                "fba52a5ecbd5c61d"
+            ]
+        ]
+    },
+    {
+        "id": "20f1565f0df61d0a",
+        "type": "debug",
+        "z": "b59774f4b980efc4",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "url",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "65c025046b5baa90",
+        "type": "function",
+        "z": "b59774f4b980efc4",
+        "name": "Get Address Name",
+        "func": "// 受け取ったJSONオブジェクトの取得\nvar features = msg.payload.YDF.Feature;\nvar resultInfo = msg.payload.YDF.ResultInfo;\n\n// 町・大字の情報を格納するための配列を用意\nvar matchingAddresses = [];\n\nif (!Array.isArray(resultInfo)) {\n    resultInfo = [resultInfo];\n}\n\nvar total = resultInfo[0].Total;\n\nif (total == 0) {\n    var obj = {\n        Address: \"\",\n    }\n    matchingAddresses.push(obj);\n    msg.payload = matchingAddresses;\n    return msg;\n}\nelse\n{\n    // 配列でない場合に備えて、配列に変換\n    if (!Array.isArray(features)) {\n        features = [features];\n    }\n\n    for (var i = 0; i < features.length; i++) {\n        var properties = features[i].Property;\n        var addressTypes = properties[0].AddressType;\n\n        // AddressTypeが町・大字なら、そのFeatureをmatchingFeaturesに追加\n        if (addressTypes && addressTypes[0] === \"町・大字\") {\n            var featureObj = {\n                Address: properties[0].Address[0],\n            };\n            matchingAddresses.push(featureObj);\n        }\n    }\n\n    // 結果をmsg.payloadに格納して返す\n    msg.payload = matchingAddresses;\n    return msg;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 420,
+        "wires": [
+            [
+                "6000083722732fc7",
+                "77ec09164c18363e"
+            ]
+        ]
+    },
+    {
+        "id": "77ec09164c18363e",
+        "type": "debug",
+        "z": "b59774f4b980efc4",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1140,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "6132b44a063f042e",
+        "type": "xml",
+        "z": "b59774f4b980efc4",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 890,
+        "y": 360,
+        "wires": [
+            [
+                "65c025046b5baa90"
+            ]
+        ]
+    },
+    {
+        "id": "6000083722732fc7",
+        "type": "http response",
+        "z": "b59774f4b980efc4",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1010,
+        "y": 480,
+        "wires": []
+    }
+]

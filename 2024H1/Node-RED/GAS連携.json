@@ -1,0 +1,154 @@
+[
+    {
+        "id": "e529c16d1ea04b54",
+        "type": "tab",
+        "label": "GAS",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "5f7359cb43d6c8d8",
+        "type": "function",
+        "z": "e529c16d1ea04b54",
+        "name": "GAS APIリクエスト",
+        "func": "\nvar data = msg.payload[0];\n\nvar name = data.name;\nvar date = data.date;\nvar job = data.job;\nvar age = data.age;\n\nvar dateObject = new Date(date * 1000);\n\nmsg.url = 'https://script.google.com/a/macros/metamoji.com/s/AKfycbzGvvtrCsqyOMbzcPpNOTJsLTDpWs-pwXJsBNL5nhWyzcKt0wH4YCpmFMh6NM2HmTHhig/exec' +\n          '?name=' + encodeURIComponent(name) +\n          '&date=' + encodeURIComponent(dateObject.toISOString()) +\n          '&job=' + encodeURIComponent(job) +\n          '&age=' + encodeURIComponent(age);\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 100,
+        "wires": [
+            [
+                "266e21309312aa50",
+                "1637d5564648d06b"
+            ]
+        ]
+    },
+    {
+        "id": "1637d5564648d06b",
+        "type": "debug",
+        "z": "e529c16d1ea04b54",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 20,
+        "wires": []
+    },
+    {
+        "id": "c4595c4be6c56a8d",
+        "type": "inject",
+        "z": "e529c16d1ea04b54",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"name\":\"ABS\",\"date\":\"2024-09-01\",\"job\":\"Student\",\"age\":24}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "5f7359cb43d6c8d8"
+            ]
+        ]
+    },
+    {
+        "id": "02cde599e1d23b1b",
+        "type": "debug",
+        "z": "e529c16d1ea04b54",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "url",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 760,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "266e21309312aa50",
+        "type": "http request",
+        "z": "e529c16d1ea04b54",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "bearer",
+        "senderr": false,
+        "headers": [
+            {
+                "keyType": "Content-Type",
+                "keyValue": "",
+                "valueType": "application/json",
+                "valueValue": ""
+            }
+        ],
+        "x": 570,
+        "y": 100,
+        "wires": [
+            [
+                "02cde599e1d23b1b",
+                "d9efc3d2f6723c3c"
+            ]
+        ]
+    },
+    {
+        "id": "0bbed8dacb4a23f0",
+        "type": "http in",
+        "z": "e529c16d1ea04b54",
+        "name": "",
+        "url": "/GAS",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "5f7359cb43d6c8d8"
+            ]
+        ]
+    },
+    {
+        "id": "d9efc3d2f6723c3c",
+        "type": "http response",
+        "z": "e529c16d1ea04b54",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 750,
+        "y": 240,
+        "wires": []
+    }
+]
