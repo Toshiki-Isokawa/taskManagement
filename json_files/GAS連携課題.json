@@ -1,0 +1,299 @@
+[
+    {
+        "id": "f28ff3c239fb141f",
+        "type": "tab",
+        "label": "Flow 3",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "2a2099b28efec1f0",
+        "type": "inject",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "SHEETS_API_KEY",
+        "payloadType": "env",
+        "x": 130,
+        "y": 180,
+        "wires": [
+            [
+                "aeb993b14c97ed78"
+            ]
+        ]
+    },
+    {
+        "id": "aeb993b14c97ed78",
+        "type": "function",
+        "z": "f28ff3c239fb141f",
+        "name": "スプレッドシートAPI",
+        "func": "const spreadsheetId = \"1N_QHSeDRjGhkCMfm-iNUMMeUlsKBxycffs9zBZplfn0\";\nconst sheetName = \"TaskManagement\";\nconst range = \"A2:A\";  // 取得範囲（タスク名のみ）\nconst apiKey = env.get(\"SHEETS_API_KEY\");  // 環境変数からAPIキー取得\n\nmsg.url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${sheetName}!${range}?key=${apiKey}`;\nmsg.method = \"GET\";\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 160,
+        "wires": [
+            [
+                "c2ae3913915a626b"
+            ]
+        ]
+    },
+    {
+        "id": "0c39662535282ab9",
+        "type": "http in",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "url": "/name",
+        "method": "get",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 100,
+        "wires": [
+            [
+                "aeb993b14c97ed78"
+            ]
+        ]
+    },
+    {
+        "id": "c2ae3913915a626b",
+        "type": "http request",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 590,
+        "y": 160,
+        "wires": [
+            [
+                "21e5022e5530d40c"
+            ]
+        ]
+    },
+    {
+        "id": "330029c6f344057e",
+        "type": "http response",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 590,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "05f68f5174e538ee",
+        "type": "function",
+        "z": "f28ff3c239fb141f",
+        "name": "データ整形",
+        "func": "if (!msg.payload.values) {\n    msg.payload = { error: \"データが見つかりません\" };\n    return msg;\n}\n\n// タスク名のリストを取得\nconst name = msg.payload.values.flat();\n\n// eYACHO に送信するレスポンスデータを作成\nmsg.payload = name.map(n => ({ assignee: n }));\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 280,
+        "wires": [
+            [
+                "330029c6f344057e",
+                "08e408b38ba23067"
+            ]
+        ]
+    },
+    {
+        "id": "08e408b38ba23067",
+        "type": "debug",
+        "z": "f28ff3c239fb141f",
+        "name": "debug 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 600,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "21e5022e5530d40c",
+        "type": "json",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 150,
+        "y": 280,
+        "wires": [
+            [
+                "05f68f5174e538ee"
+            ]
+        ]
+    },
+    {
+        "id": "6df11e1b7e3fe6b9",
+        "type": "http in",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "url": "/search",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 400,
+        "wires": [
+            [
+                "b3a542bcd1891dc6"
+            ]
+        ]
+    },
+    {
+        "id": "a4cf1b8141328f9d",
+        "type": "debug",
+        "z": "f28ff3c239fb141f",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 620,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "86f9daa48e2c448d",
+        "type": "http response",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 550,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "b3a542bcd1891dc6",
+        "type": "function",
+        "z": "f28ff3c239fb141f",
+        "name": "Serp API",
+        "func": "const apiKey = env.get(\"SERP_API_KEY\");  // SerpAPIのAPIキー\nconst query = `${msg.payload.task} ${msg.payload.detail}`; // タスク名 + 詳細\nconst searchUrl = `https://serpapi.com/search.json?engine=google&q=${encodeURIComponent(query)}&num=8&api_key=${apiKey}`;\n\nmsg.url = searchUrl;\nmsg.method = \"GET\";\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 400,
+        "wires": [
+            [
+                "42c5cee490dfc9d3"
+            ]
+        ]
+    },
+    {
+        "id": "42c5cee490dfc9d3",
+        "type": "http request",
+        "z": "f28ff3c239fb141f",
+        "name": "",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 550,
+        "y": 400,
+        "wires": [
+            [
+                "7c705cca04dba123"
+            ]
+        ]
+    },
+    {
+        "id": "7c705cca04dba123",
+        "type": "function",
+        "z": "f28ff3c239fb141f",
+        "name": "データ整形",
+        "func": "const results = msg.payload.organic_results || [];\nconst formattedResults = results.slice(0, 8).map(result => {\n    return { title: result.title, link: result.link };\n});\n\nmsg.payload = formattedResults;\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 480,
+        "wires": [
+            [
+                "86f9daa48e2c448d",
+                "a4cf1b8141328f9d"
+            ]
+        ]
+    },
+    {
+        "id": "035c0ec50e277295",
+        "type": "inject",
+        "z": "f28ff3c239fb141f",
+        "name": "変数",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"task\":\"WEBサイト制作\",\"detail\":\"JavaScript\"}",
+        "payloadType": "json",
+        "x": 150,
+        "y": 460,
+        "wires": [
+            [
+                "b3a542bcd1891dc6"
+            ]
+        ]
+    }
+]

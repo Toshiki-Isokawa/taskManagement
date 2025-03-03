@@ -1,0 +1,37 @@
+{
+    "display_information": {
+        "name": "chatGPT_bot"
+    },
+    "features": {
+        "bot_user": {
+            "display_name": "chatGPT_bot",
+            "always_online": false
+        }
+    },
+    "oauth_config": {
+        "scopes": {
+            "bot": [
+                "channels:history",
+                "chat:write",
+                "im:history",
+                "users:read",
+                "chat:write.public",
+                "app_mentions:read",
+                "incoming-webhook"
+            ]
+        }
+    },
+    "settings": {
+        "event_subscriptions": {
+            "request_url": "https://script.google.com/macros/s/AKfycbzEQhwfLaCLoZd8LgA7Zpivu-RPDuzrDAn70vYr5uqEsFgpPCGKjr75uFmRIY-aJWNhFQ/exec",
+            "bot_events": [
+                "app_mention",
+                "message.channels",
+                "message.im"
+            ]
+        },
+        "org_deploy_enabled": false,
+        "socket_mode_enabled": false,
+        "token_rotation_enabled": false
+    }
+}
